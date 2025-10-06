@@ -1,5 +1,6 @@
 load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
 load("@pythons_hub//:versions.bzl", "DEFAULT_PYTHON_VERSION", "MINOR_MAPPING", "PYTHON_VERSIONS")
+load("@rules_python_internal//:rules_python_config.bzl", "config")
 load(
     "//python/private:flags.bzl",
     "AddSrcsToRunfilesFlag",
@@ -244,5 +245,18 @@ label_flag(
 bool_flag(
     name = "experimental_python_import_all_repositories",
     build_setting_default = True,
+    help = "If true, the roots of repositories in the runfiles tree are added to PYTHONPATH, so " +
+           "that imports like `import mytoplevelpackage.package.module` are valid." +
+           " Regardless of whether this flag is true, the runfiles root itself is also" +
+           " added to the PYTHONPATH, so " +
+           "`import myreponame.mytoplevelpackage.package.module` is valid. The latter form " +
+           "is less likely to experience import name collisions.",
+    visibility = ["//visibility:public"],
+)
+
+bool_flag(
+    name = "build_python_zip",
+    build_setting_default = config.build_python_zip_default,
+    help = "Build python executable zip. Defaults to on on Windows, off on other platforms",
     visibility = ["//visibility:public"],
 )
